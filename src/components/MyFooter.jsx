@@ -1,11 +1,9 @@
-import { Component } from "react";
+const MyFooter = () => (
+  <footer className="d-flex bg-dark mt-2">
+    <span className="text-white m-auto p-2">
+      <strong>EPICODE</strong> - Copyright {new Date().getFullYear()}
+    </span>
+  </footer>
+)
 
-function MyFooter() {
-  return (
-    <footer className="bg-dark text-white text-center py-3">
-      <p>&copy; 2025 BookShop - All rights reserved</p>
-    </footer>
-  );
-}
-
-export default MyFooter;
+export default MyFooter
