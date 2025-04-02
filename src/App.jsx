@@ -2,7 +2,8 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import MyNav from "./components/MyNav";
 import MyFooter from "./components/MyFooter";
 import Welcome from "./components/Welcome";
-import AllTheBooks from "./components/AllTheBooks";
+import SingleBook from "./components/SingleBook";
+import BookList from "./components/BookList";
 function App() {
   return (
     <>
@@ -11,8 +12,9 @@ function App() {
         <main className="flex-grow-1"></main>
       </div>
       <Welcome />
+      <SingleBook />
+      <BookList />
 
-      <AllTheBooks />
       <MyFooter />
     </>
   );
