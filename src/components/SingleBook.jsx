@@ -1,23 +1,48 @@
-import { useState } from "react";
-import CommentArea from "./components/CommentArea";
+import { Component } from "react";
+import { Card, Button, Col } from "react-bootstrap";
+import CommentArea from "./CommentArea";
 
-const SingleBook = ({ book }) => {
-  const [selected, setSelected] = useState(false);
+// SingleBook deve far vedere un libro! Ma non sa di quale libro si tratta...
+// ...sa solo che lo riceverà nelle props sotto forma di "book"
 
-  const handleSelect = () => {
-    setSelected(!selected);
+class SingleBook extends Component {
+  state = {
+    selected: false,
   };
 
-  return (
-    <div
-      className={`single-book ${selected ? "selected" : ""}`}
-      onClick={handleSelect}
-    >
-      <h3>{book.title}</h3>
-      <p>Autore: {book.author}</p>
-      <p>Prezzo: {book.price}€</p>
-      {selected && <CommentArea bookId={book.asin} />}
-    </div>
-  );
-};
+  render() {
+    return (
+      <Col xs={12} md={6} lg={3}>
+        <Card
+          // className={
+          //   this.state.selected ? 'altraclasse selectedBook' : 'altraclasse'
+          // }
+          //   className={`altraclasse ${this.state.selected ? 'selectedBook' : ''}`}
+          style={{
+            border: this.state.selected ? "2px solid red" : "1px solid gray",
+          }}
+        >
+          <Card.Img
+            variant="top"
+            src={this.props.book.img}
+            onClick={() => {
+              this.setState({
+                selected: !this.state.selected, // toggle
+              });
+            }}
+          />
+          <Card.Body>
+            <Card.Title>{this.props.book.title}</Card.Title>
+            <Card.Text>
+              {this.props.book.category} - {this.props.book.price}
+            </Card.Text>
+            <Button variant="primary">Go somewhere</Button>
+            {this.state.selected && <CommentArea asin={this.props.book.asin} />}
+          </Card.Body>
+        </Card>
+      </Col>
+    );
+  }
+}
+
 export default SingleBook;

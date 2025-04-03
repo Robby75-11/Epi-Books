@@ -1,57 +1,87 @@
-import React, { useState } from "react";
-const AddComment = ({ bookId, onAddComment }) => {
-  const [comment, setComment] = useState("");
-  const [rate, setRate] = useState(1);
+import { Component } from "react";
+import { Button, Form } from "react-bootstrap";
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      const response = await fetch(
-        "https://striveschool-api.herokuapp.com/api/comments",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization:
-              "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2N2VlOGVkZTk0OTJlNDAwMTVlN2M3MTMiLCJpYXQiOjE3NDM2ODczOTAsImV4cCI6MTc0NDg5Njk5MH0.HfTmCQv7atMs3OTrDFDL7DjZI9GhjpxcmRafiTJsELQ",
-          },
-          body: JSON.stringify({
-            comment,
-            rate,
-            elementId: bookId,
-          }),
-        }
-      );
-      if (response.ok) {
-        const newComment = await response.json();
-        onAddComment(newComment);
-        setComment("");
-        setRate(1);
-      }
-    } catch (error) {
-      console.error("Errore nell'aggiunta del commento", error);
-    }
+const URL = "https://striveschool-api.herokuapp.com/api/comments/";
+
+class AddComment extends Component {
+  state = {
+    review: {
+      comment: "",
+      rate: "3",
+      elementId: this.props.asin,
+    },
   };
 
-  return (
-    <form onSubmit={handleSubmit} className="add-comment">
-      <input
-        type="text"
-        value={comment}
-        onChange={(e) => setComment(e.target.value)}
-        placeholder="Scrivi un commento..."
-        required
-      />
-      <select value={rate} onChange={(e) => setRate(Number(e.target.value))}>
-        {[1, 2, 3, 4, 5].map((n) => (
-          <option key={n} value={n}>
-            {n}
-          </option>
-        ))}
-      </select>
-      <button type="submit">Aggiungi</button>
-    </form>
-  );
-};
+  sendReview = (e) => {
+    e.preventDefault();
+    // facciamo la post, inviando come body this.state.review
+    fetch(URL, {
+      method: "POST",
+      body: JSON.stringify(this.state.review),
+      headers: {
+        "Content-Type": "application/json",
+        authorization:
+          "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NWJiYWIwMjViMjYxNTAwMTk4YTY5NmEiLCJpYXQiOjE3NDM2OTM5NzksImV4cCI6MTc0NDkwMzU3OX0.lwf-ZIFoaovBa04KJbdJgNOkivE8F7TkiASjtoOsHWs",
+      },
+    })
+      .then((response) => {
+        if (response.ok) {
+          alert("COMMENTO INVIATO!");
+        } else {
+          throw new Error("commento NON inviato");
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  render() {
+    return (
+      <Form onSubmit={this.sendReview}>
+        <Form.Group className="mb-3">
+          <Form.Label>Testo</Form.Label>
+          <Form.Control
+            type="text"
+            placeholder="Bello sto libbbro!"
+            value={this.state.review.comment}
+            required
+            onChange={(e) => {
+              this.setState({
+                review: {
+                  ...this.state.review,
+                  comment: e.target.value,
+                },
+              });
+            }}
+          />
+        </Form.Group>
+        <Form.Group className="mb-3">
+          <Form.Label>Voto</Form.Label>
+          <Form.Select
+            value={this.state.review.rate}
+            onChange={(e) => {
+              this.setState({
+                review: {
+                  ...this.state.review,
+                  rate: e.target.value,
+                },
+              });
+            }}
+          >
+            <option>1</option>
+            <option>2</option>
+            <option>3</option>
+            <option>4</option>
+            <option>5</option>
+          </Form.Select>
+        </Form.Group>
+        <Button variant="success" type="submit">
+          INVIA
+        </Button>
+      </Form>
+    );
+  }
+}
 
 export default AddComment;

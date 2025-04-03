@@ -1,23 +1,30 @@
-import { Card, Col, Row } from 'react-bootstrap'
-import fantasy from '../data/fantasy.json'
+import { Card, Col, Container, Row, Button } from "react-bootstrap";
+import fantasy from "../data/fantasy.json";
+// scifi è un array di libri!
 
-const AllTheBooks = () => {
+const AllTheBooks = function () {
   return (
-    <Row className="g-2">
-      {fantasy.map((book) => {
-        return (
-          <Col xs={12} md={4} key={book.asin}>
-            <Card className="book-cover d-flex flex-column">
-              <Card.Img variant="top" src={book.img} />
-              <Card.Body>
-                <Card.Title>{book.title}</Card.Title>
-              </Card.Body>
-            </Card>
-          </Col>
-        )
-      })}
-    </Row>
-  )
-}
+    <Container>
+      <Row>
+        {fantasy.map((fantasyBook) => {
+          return (
+            <Col xs={12} md={4} lg={3} key={fantasyBook.asin}>
+              <Card>
+                <Card.Img variant="top" src={fantasyBook.img} />
+                <Card.Body>
+                  <Card.Title>{fantasyBook.title}</Card.Title>
+                  <Card.Text>
+                    {fantasyBook.asin} - {fantasyBook.price}€
+                  </Card.Text>
+                  <Button variant="primary">COMPRAMI</Button>
+                </Card.Body>
+              </Card>
+            </Col>
+          );
+        })}
+      </Row>
+    </Container>
+  );
+};
 
-export default AllTheBooks
+export default AllTheBooks;

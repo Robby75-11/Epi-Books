@@ -1,56 +1,55 @@
-import React, { useState, useEffect } from "react";
-import CommentsList from "./components/CommentsList";
-import AddComment from "./components/AddComment";
+import { Component } from "react";
+import CommentsList from "./CommentsList";
+import AddComment from "./AddComment";
 
-const CommentArea = ({ bookId }) => {
-  const [comments, setComments] = useState([]);
-  useEffect(() => {
-    if (bookId) {
-      fetchComments();
-    }
-  }, [bookId]);
+const URL = "https://striveschool-api.herokuapp.com/api/comments/";
 
-  const fetchComments = async () => {
-    try {
-      const response = await fetch(
-        `https://striveschool-api.herokuapp.com/api/comments/${bookId}`,
-        {
-          headers: {
-            Authorization:
-              "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2N2VlOGVkZTk0OTJlNDAwMTVlN2M3MTMiLCJpYXQiOjE3NDM2ODczOTAsImV4cCI6MTc0NDg5Njk5MH0.HfTmCQv7atMs3OTrDFDL7DjZI9GhjpxcmRafiTJsELQ",
-          },
+class CommentArea extends Component {
+  // riceve una prop di nome "asin" che fornisce a questa CommentArea l'id del libro
+  // su cui fare la fetch
+
+  state = {
+    reviews: [], // diventa un array pieno di recensioni
+  };
+
+  getReviews = () => {
+    fetch(URL + this.props.asin, {
+      headers: {
+        authorization:
+          "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NWJiYWIwMjViMjYxNTAwMTk4YTY5NmEiLCJpYXQiOjE3NDM2OTM5NzksImV4cCI6MTc0NDkwMzU3OX0.lwf-ZIFoaovBa04KJbdJgNOkivE8F7TkiASjtoOsHWs",
+      },
+    }) // es. https://striveschool-api.herokuapp.com/api/comments/0316438960
+      .then((response) => {
+        if (response.ok) {
+          return response.json();
+        } else {
+          throw new Error("recensioni non recuperate");
         }
-      );
-      if (response.ok) {
-        const data = await response.json();
-        setComments(data);
-      }
-    } catch (error) {
-      console.error("Errore nel recupero dei commenti", error);
-    }
+      })
+      .then((data) => {
+        console.log("DATA", data); // array delle recensioni
+        this.setState({
+          reviews: data, // metto le recensioni nello stato
+        });
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
 
-  const handleAddComment = (newComment) => {
-    setComments([...comments, newComment]);
+  componentDidMount = () => {
+    this.getReviews();
   };
 
-  const handleDeleteComment = (commentId) => {
-    setComments(comments.filter((comment) => comment._id !== commentId));
-  };
-
-  return (
-    <div className="comment-area">
-      {bookId && (
-        <>
-          <CommentsList
-            comments={comments}
-            onDeleteComment={handleDeleteComment}
-          />
-          <AddComment bookId={bookId} onAddComment={handleAddComment} />
-        </>
-      )}
-    </div>
-  );
-};
+  render() {
+    return (
+      <div>
+        <h2>COMMENTAREA</h2>
+        <AddComment asin={this.props.asin} />
+        <CommentsList reviews={this.state.reviews} />
+      </div>
+    );
+  }
+}
 
 export default CommentArea;

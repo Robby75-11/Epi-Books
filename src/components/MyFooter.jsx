@@ -1,9 +1,11 @@
-const MyFooter = () => (
-  <footer className="d-flex bg-dark ">
-    <span className="text-white m-auto p-2">
-      <strong>EPICODE</strong> - Copyright {new Date().getFullYear()}
-    </span>
-  </footer>
-);
+const MyFooter = function () {
+  return (
+    <div>
+      <p className="py-2 bg-body-secondary text-center">
+        EPICODE - {new Date().getFullYear()}{" "}
+      </p>
+    </div>
+  );
+};
 
 export default MyFooter;

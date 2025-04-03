@@ -1,19 +1,13 @@
-import SingleComment from "./components/SingleComment";
-const CommentsList = ({ comments, onDeleteComment }) => {
+import { ListGroup } from "react-bootstrap";
+import SingleComment from "./SingleComments";
+
+const CommentsList = function (props) {
   return (
-    <div className="comments-list">
-      {comments.length > 0 ? (
-        comments.map((comment) => (
-          <SingleComment
-            key={comment._id}
-            comment={comment}
-            onDeleteComment={onDeleteComment}
-          />
-        ))
-      ) : (
-        <p>Nessun commento disponibile</p>
-      )}
-    </div>
+    <ListGroup>
+      {props.reviews.map((recensione) => {
+        return <SingleComment recensione={recensione} key={recensione._id} />;
+      })}
+    </ListGroup>
   );
 };
 

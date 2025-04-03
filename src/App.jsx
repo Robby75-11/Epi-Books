@@ -1,34 +1,32 @@
 import "bootstrap/dist/css/bootstrap.min.css";
+import "bootstrap-icons/font/bootstrap-icons.min.css";
 import MyNav from "./components/MyNav";
 import MyFooter from "./components/MyFooter";
 import Welcome from "./components/Welcome";
+import AllTheBooks from "./components/AllTheBooks";
 import SingleBook from "./components/SingleBook";
-import "./App.css";
+import fantasyBooks from "./data/fantasy.json";
+import BookList from "./components/BookList";
 
 function App() {
-  const [books, setBooks] = useState([
-    {
-      asin: "12345",
-      title: "Libro 1",
-      author: "Autore 1",
-      price: 15.99,
-    },
-    {
-      asin: "67890",
-      title: "Libro 2",
-      author: "Autore 2",
-      price: 20.99,
-    },
-  ]);
   return (
-    <>
+    <div className="d-flex flex-column min-vh-100">
       <MyNav />
+      <main className="flex-grow-1">
+        <Welcome />
+        {/* <AllTheBooks /> */}
 
-      <Welcome />
-      <SingleBook />
+        {/* immaginiamo che SingleBook riceva il libro da far vedere
+        sotto forma di prop: chiameremo questa prop (oggetto) "book" */}
+        {/* <SingleBook book={fantasyBooks[19]} />
 
+        <SingleBook book={fantasyBooks[2]} />
+        
+        <SingleBook book={fantasyBooks[9]} /> */}
+        <BookList arrayOfBooks={fantasyBooks} />
+      </main>
       <MyFooter />
-    </>
+    </div>
   );
 }
 
