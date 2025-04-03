@@ -1,6 +1,6 @@
 import { Card, Col, Container, Row, Button } from "react-bootstrap";
 import fantasy from "../data/fantasy.json";
-// scifi è un array di libri!
+// fantasy è un array di libri!
 
 const AllTheBooks = function () {
   return (
