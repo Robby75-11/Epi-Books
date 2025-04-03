@@ -1,22 +1,23 @@
-import { Button, Card, Col, Container, Row } from "react-bootstrap";
-import romance from "../data/romance.json";
-import React, { Component } from "react";
-const SingleBook = function (props) {
+import { useState } from "react";
+import CommentArea from "./components/CommentArea";
+
+const SingleBook = ({ book }) => {
+  const [selected, setSelected] = useState(false);
+
+  const handleSelect = () => {
+    setSelected(!selected);
+  };
+
   return (
-    <Container>
-      <Row className="g-2">
-        <Col xs={12} md={4} lg={3} key={props.asin}>
-          <Card className="book-cover d-flex flex-column ">
-            <Card.Img variant="top" src={props.img} />
-            <Card.Body className="d-flex flex-column testColor">
-              <Card.Title className="flex-grow-1"> {props.title}</Card.Title>
-              <Button variant="dark">Acquista</Button>
-            </Card.Body>
-          </Card>
-        </Col>
-      </Row>
-    </Container>
+    <div
+      className={`single-book ${selected ? "selected" : ""}`}
+      onClick={handleSelect}
+    >
+      <h3>{book.title}</h3>
+      <p>Autore: {book.author}</p>
+      <p>Prezzo: {book.price}€</p>
+      {selected && <CommentArea bookId={book.asin} />}
+    </div>
   );
 };
-
 export default SingleBook;

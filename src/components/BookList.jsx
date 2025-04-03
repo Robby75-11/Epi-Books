@@ -1,20 +1,41 @@
-const BookList = function (props) {
-  return (
-    <Container fluid className="text-center p-3">
-      <h1 className="text-light p-5">Romance Books</h1>
-      <Row className="justify-content-center g-3"></Row>
-      {props.arrayOfBooks.map((book) => (
-        <Col xs={12} md={4} lg={3} key={book.asin}>
-          <Card className="book-cover d-flex flex-column ">
-            <Card.Img variant="top" src={book.img} />
-            <Card.Body className="d-flex flex-column testColor">
-              <Card.Title className="flex-grow-1"> {book.title}</Card.Title>
-              <Button variant="dark">Acquista</Button>
-            </Card.Body>
-          </Card>
-        </Col>
-      ))}
-    </Container>
-  );
-};
+import { Component } from "react";
+import SingleBook from "./SingleBook";
+import { Col, Form, Row } from "react-bootstrap";
+
+class BookList extends Component {
+  state = {
+    searchQuery: "",
+  };
+
+  render() {
+    return (
+      <>
+        <Row className="justify-content-center mt-5">
+          <Col xs={12} md={4} className="text-center">
+            <Form.Group>
+              <Form.Control
+                type="search"
+                placeholder="Cerca un libro"
+                value={this.state.searchQuery}
+                onChange={(e) => this.setState({ searchQuery: e.target.value })}
+              />
+            </Form.Group>
+          </Col>
+        </Row>
+        <Row className="g-2 mt-3">
+          {this.props.books
+            .filter((b) =>
+              b.title.toLowerCase().includes(this.state.searchQuery)
+            )
+            .map((b) => (
+              <Col xs={12} md={4} key={b.asin}>
+                <SingleBook book={b} />
+              </Col>
+            ))}
+        </Row>
+      </>
+    );
+  }
+}
+
 export default BookList;
