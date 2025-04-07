@@ -1,64 +1,41 @@
 // BookList riceve dalle props un array di libri, sotto il nome di "arrayOfBooks"
 
-import { Container, Form, Row, Col } from "react-bootstrap";
+import { Container, Row, Col } from "react-bootstrap";
 import SingleBook from "./SingleBook";
-import { Component } from "react";
+import React, { useState, useEffect } from "react";
+import CommentArea from "./CommentArea";
 
-class BookList extends Component {
-  state = {
-    search: "", // il valore del campo di ricerca
+const BookList = ({ books }) => {
+  const [selectedAsin, setSelectedAsin] = useState(null);
+
+  const handleBookClick = (asin) => {
+    setSelectedBookId(asin);
   };
 
-  render() {
-    return (
-      <Container>
-        <Row className="justify-content-center my-5">
-          <Col xs={12} md={6}>
-            <Form.Control
-              type="text"
-              placeholder="cerca un libro"
-              value={this.state.search}
-              onChange={(e) => {
-                this.setState({
-                  search: e.target.value,
-                });
-              }}
-            />
-          </Col>
-        </Row>
-        <Row>
-          {this.props.arrayOfBooks
-            .filter((libro) => {
-              // filter applica una condizione ad ogni libro
-              // se la condizione ritorna true, il libro corrente farà parte
-              // dell'array filtrato; se invece la condizione sul libro torna false,
-              // il filtro blocca il libro e non andrà a far parte dei risultati
-              if (
-                libro.title
-                  .toLowerCase()
-                  .includes(this.state.search.toLowerCase())
-              ) {
-                return true;
-              } else {
-                return false;
-              }
-            })
-            // versione abbreviata ultrapro
-            // .filter((libro) =>
-            //   libro.title
-            //     .toLowerCase()
-            //     .includes(this.state.search.toLowerCase())
-            // )
-            .map((libro) => {
-              // genero 50 volte SingleBook
-              // per ogni libro genero un SingleBook
-              // ogni invocazione di SingleBook riceve un libro diverso!
-              return <SingleBook book={libro} key={libro.asin} />;
-            })}
-        </Row>
-      </Container>
-    );
-  }
-}
+  return (
+    <Container fluid>
+      <Row>
+        <Col md={8}>
+          {" "}
+          {/* Colonna per la griglia dei libri (occupa 8 delle 12 colonne) */}
+          <div className="book-grid">
+            {books.map((book) => (
+              <SingleBook
+                key={book.asin}
+                book={book}
+                onBookClick={handleBookClick}
+                isSelected={selectedAsin === book.asin}
+              />
+            ))}
+          </div>
+        </Col>
+        <Col md={4}>
+          {/* Colonna per la CommentArea (occupa le restanti 4 colonne) */}
+          <CommentArea asin={selectedAsin} />
+        </Col>
+      </Row>
+    </Container>
+  );
+};
 
 export default BookList;
