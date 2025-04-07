@@ -1,57 +1,63 @@
-import React, { useState, useEffect } from "react";
-const CommentArea = ({ asin }) => {
-  const [comments, setComments] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+import { Component } from "react";
+import CommentsList from "./CommentsList";
+import AddComment from "./AddComment";
+import Loading from "./Loading";
+import Error from "./Error";
+const URL = "https://striveschool-api.herokuapp.com/api/comments/";
 
-  useEffect(() => {
-    if (asin) {
-      setLoading(true);
-      setError(null);
+class CommentArea extends Component {
+  // riceve una prop di nome "asin" che fornisce a questa CommentArea l'id del libro
+  // su cui fare la fetch
 
-      fetch(`https://striveschool-api.herokuapp.com/api/comments/${asin}`)
-        .then((response) => {
-          if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+  state = {
+    comments: [],
+    isLoading: false,
+    isError: false,
+  };
+  componentDidUpdate = async (prevProps) => {
+    if (prevProps.asin !== this.props.asin) {
+      this.setState({
+        isLoading: true,
+      });
+      try {
+        let response = await fetch(
+          "https://striveschool-api.herokuapp.com/api/comments/" +
+            this.props.asin,
+          {
+            headers: {
+              Authorization:
+                "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2N2VlOGVkZTk0OTJlNDAwMTVlN2M3MTMiLCJpYXQiOjE3NDQwNDAxMzIsImV4cCI6MTc0NTI0OTczMn0.VHSnef-aTB717ceHPunLHP2eAeRZm7z8rERnuVBSHRM ",
+            },
           }
-          return response.json();
-        })
-        .then((data) => {
-          setComments(data);
-          setLoading(false);
-        })
-        .catch((error) => {
-          setError(error.message);
-          setLoading(false);
-        });
-    } else {
-      // Resetta i commenti e lo stato se non c'è un asin selezionato
-      setComments([]);
+        );
+        console.log(response);
+        if (response.ok) {
+          let comments = await response.json();
+          this.setState({
+            comments: comments,
+            isLoading: false,
+            isError: false,
+          });
+        } else {
+          this.setState({ isLoading: false, isError: true });
+        }
+      } catch (error) {
+        console.log(error);
+        this.setState({ isLoading: false, isError: true });
+      }
     }
-  }, [asin]); // L'effetto si esegue ogni volta che l'asin cambia
+  };
 
-  return (
-    <div className="comment-area">
-      <h4>Commenti</h4>
-      {asin ? (
-        <>
-          {loading && <p>Caricamento commenti...</p>}
-          {error && <p>Errore nel caricamento dei commenti: {error}</p>}
-          {!loading && !error && comments.length > 0 && (
-            <ul>
-              {comments.map((comment) => (
-                <li key={comment.id}>{comment.text}</li>
-              ))}
-            </ul>
-          )}
-          {!loading && !error && comments.length === 0 && (
-            <p>Nessun commento per questo libro.</p>
-          )}
-        </>
-      ) : (
-        <p>Seleziona un libro per visualizzare i commenti.</p>
-      )}
-    </div>
-  );
-};
+  render() {
+    return (
+      <div className="text-center">
+        {this.state.isLoading && <Loading />}
+        {this.state.isError && <Error />}
+        <AddComment asin={this.props.asin} />
+        <CommentsList commentsToShow={this.state.comments} />
+      </div>
+    );
+  }
+}
+
 export default CommentArea;

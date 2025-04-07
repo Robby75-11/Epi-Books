@@ -1,41 +1,58 @@
 // BookList riceve dalle props un array di libri, sotto il nome di "arrayOfBooks"
 
-import { Container, Row, Col } from "react-bootstrap";
+import { Form, Row, Col } from "react-bootstrap";
 import SingleBook from "./SingleBook";
-import React, { useState, useEffect } from "react";
+import { Component } from "react";
 import CommentArea from "./CommentArea";
 
-const BookList = ({ books }) => {
-  const [selectedAsin, setSelectedAsin] = useState(null);
-
-  const handleBookClick = (asin) => {
-    setSelectedBookId(asin);
+class BookList extends Component {
+  state = {
+    searchQuery: "",
+    selectedBook: null, // il valore del campo di ricerca
   };
 
-  return (
-    <Container fluid>
-      <Row>
-        <Col md={8}>
-          {" "}
-          {/* Colonna per la griglia dei libri (occupa 8 delle 12 colonne) */}
-          <div className="book-grid">
-            {books.map((book) => (
-              <SingleBook
-                key={book.asin}
-                book={book}
-                onBookClick={handleBookClick}
-                isSelected={selectedAsin === book.asin}
-              />
-            ))}
-          </div>
-        </Col>
-        <Col md={4}>
-          {/* Colonna per la CommentArea (occupa le restanti 4 colonne) */}
-          <CommentArea asin={selectedAsin} />
-        </Col>
-      </Row>
-    </Container>
-  );
-};
+  render() {
+    return (
+      <>
+        <Row>
+          <Col md={8}>
+            <Row className="justify-content-center mt-5">
+              <Col xs={12} md={4} className="text-center">
+                <Form.Group>
+                  <Form.Control
+                    type="search"
+                    placeholder="Cerca un libro"
+                    value={this.state.searchQuery}
+                    onChange={(e) =>
+                      this.setState({ searchQuery: e.target.value })
+                    }
+                  />
+                </Form.Group>
+              </Col>
+            </Row>
+            <Row className="g-2 mt-3">
+              {this.props.books
+                .filter((b) =>
+                  b.title.toLowerCase().includes(this.state.searchQuery)
+                )
+                .map((b) => (
+                  <Col xs={12} md={4} key={b.asin}>
+                    <SingleBook
+                      book={b}
+                      selectedBook={this.state.selectedBook}
+                      changeSelectedBook={this.changeSelectedBook}
+                    />
+                  </Col>
+                ))}
+            </Row>
+          </Col>
+          <Col md={4}>
+            <CommentArea asin={this.state.selectedBook} />
+          </Col>
+        </Row>
+      </>
+    );
+  }
+}
 
 export default BookList;
